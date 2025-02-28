@@ -18,20 +18,21 @@
     <p id="status"></p>
 
     <script>
-        const broker = "4f0979501d334e67b8f2d338aad8c50d.s1.eu.hivemq.cloud"; // WebSocket Secure
-        const topic = "home/LCD";
-        const client = mqtt.connect(broker);
-
-        client.on("connect", () => {
-            document.getElementById("status").innerText = "Connected to MQTT Broker";
+        const broker = "wss://4f0979501d334e67b8f2d338aad8c50d.s1.eu.hivemq.cloud:8884/mqtt";
+        const options = {
+            username: "A7321",
+            password: "123456As",
+            protocolVersion: 4
+        };
+        const client = mqtt.connect(broker, options);
+        
+        client.on("connect", function () {
+            document.getElementById("status").innerText = "Status: Connected";
+            console.log("Connected to HiveMQ");
         });
-
-        function sendMessage() {
-            const message = document.getElementById("message").value;
-            if (message) {
-                client.publish(topic, message);
-                document.getElementById("status").innerText = "Message Sent: " + message;
-            }
+        
+        function sendMessage(command) {
+            client.publish("home/lights", command);
         }
     </script>
 </body>
