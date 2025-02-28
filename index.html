@@ -5,12 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MQTT LCD Control</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #218838;
+        }
+        #status {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h2>Send Message to ESP8266 LCD</h2>
-    <input type="text" id="message" placeholder="Enter message" />
-    <button onclick="sendMessage()">Send</button>
-    <p id="status">Disconnected</p>
+    <div class="container">
+        <h2>Send Message to ESP8266 LCD</h2>
+        <input type="text" id="message" placeholder="Enter message" />
+        <button onclick="sendMessage()">Send</button>
+        <p id="status">Disconnected</p>
+    </div>
 
     <script>
         const broker = "wss://4f0979501d334e67b8f2d338aad8c50d.s1.eu.hivemq.cloud:8884/mqtt";
@@ -23,11 +70,13 @@
         
         client.on("connect", () => {
             document.getElementById("status").innerText = "Connected to MQTT Broker";
+            document.getElementById("status").style.color = "green";
             console.log("Connected to MQTT Broker");
         });
         
         client.on("error", (err) => {
             document.getElementById("status").innerText = "Connection Error";
+            document.getElementById("status").style.color = "red";
             console.error("Connection Error: ", err);
         });
         
@@ -37,6 +86,7 @@
             if (message.trim() !== "") {
                 client.publish(topic, message);
                 console.log("Message Sent: ", message);
+                document.getElementById("message").value = "";
             }
         }
     </script>
