@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Message to LCD</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        input { padding: 10px; width: 80%; margin: 10px 0; }
+        button { padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Send Message to LCD</h2>
+    <input type="text" id="message" placeholder="Enter message">
+    <button onclick="sendMessage()">Send</button>
+    <p id="status"></p>
+
+    <script>
+        const broker = "wss://broker.hivemq.com:8884/mqtt"; // WebSocket Secure
+        const topic = "home/LCD";
+        const client = mqtt.connect(broker);
+
+        client.on("connect", () => {
+            document.getElementById("status").innerText = "Connected to MQTT Broker";
+        });
+
+        function sendMessage() {
+            const message = document.getElementById("message").value;
+            if (message) {
+                client.publish(topic, message);
+                document.getElementById("status").innerText = "Message Sent: " + message;
+            }
+        }
+    </script>
+</body>
+</html>
