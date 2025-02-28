@@ -3,36 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Message to LCD</title>
+    <title>MQTT LCD Control</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        input { padding: 10px; width: 80%; margin: 10px 0; }
-        button { padding: 10px; cursor: pointer; }
-    </style>
 </head>
 <body>
-    <h2>Send Message to LCD</h2>
-    <input type="text" id="message" placeholder="Enter message">
+    <h2>Send Message to ESP8266 LCD</h2>
+    <input type="text" id="message" placeholder="Enter message" />
     <button onclick="sendMessage()">Send</button>
-    <p id="status"></p>
+    <p id="status">Disconnected</p>
 
     <script>
         const broker = "wss://4f0979501d334e67b8f2d338aad8c50d.s1.eu.hivemq.cloud:8884/mqtt";
         const options = {
             username: "A7321",
-            password: "123456As",
-            protocolVersion: 4
+            password: "123456As"
         };
+        
         const client = mqtt.connect(broker, options);
         
-        client.on("connect", function () {
-            document.getElementById("status").innerText = "Status: Connected";
-            console.log("Connected to HiveMQ");
+        client.on("connect", () => {
+            document.getElementById("status").innerText = "Connected to MQTT Broker";
+            console.log("Connected to MQTT Broker");
         });
         
-        function sendMessage(command) {
-            client.publish("home/lights", command);
+        client.on("error", (err) => {
+            document.getElementById("status").innerText = "Connection Error";
+            console.error("Connection Error: ", err);
+        });
+        
+        function sendMessage() {
+            const topic = "home/LCD";
+            const message = document.getElementById("message").value;
+            if (message.trim() !== "") {
+                client.publish(topic, message);
+                console.log("Message Sent: ", message);
+            }
         }
     </script>
 </body>
